@@ -13,6 +13,7 @@ def generate_music(
     stage1_model,
     stage2_model,
     max_new_tokens,
+    repetition_penalty,
     run_n_segments,
     stage2_batch_size,
     use_audio_prompt,
@@ -46,6 +47,7 @@ def generate_music(
         stage1_model=stage1_model,
         stage2_model=stage2_model,
         max_new_tokens=max_new_tokens,
+        repetition_penalty=repetition_penalty,
         run_n_segments=run_n_segments,
         stage2_batch_size=stage2_batch_size,
         use_audio_prompt=use_audio_prompt,
@@ -248,6 +250,14 @@ with gr.Blocks(
                         value=3000,
                         step=100,
                         info="The maximum number of tokens to generate.",
+                    )
+                    repetition_penalty = gr.Slider(
+                        label="Repetition Penalty",
+                        minimum=1.0,
+                        maximum=2.0,
+                        value=1.1,
+                        step=0.1,
+                        info="The repetition penalty for generation.",
                     )
                     run_n_segments = gr.Slider(
                         label="Number of Segments",
@@ -536,6 +546,7 @@ I won't back down""",
             stage1_model,
             stage2_model,
             max_new_tokens,
+            repetition_penalty,
             run_n_segments,
             stage2_batch_size,
             use_audio_prompt,
