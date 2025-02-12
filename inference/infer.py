@@ -44,6 +44,7 @@ def create_args(
     stage1_model: str = "m-a-p/YuE-s1-7B-anneal-en-cot",
     stage2_model="m-a-p/YuE-s2-1B-general",
     max_new_tokens: int = 3000,
+    repetition_penalty: float = 1.1,
     run_n_segments: int = 2,
     stage2_batch_size: int = 2,
     use_audio_prompt: bool = False,
@@ -96,6 +97,12 @@ def create_args(
         type=int,
         default=3000,
         help="The maximum number of new tokens to generate in one pass during text generation.",
+    )
+    parser.add_argument(
+        "--repetition_penalty",
+        type=float,
+        default=1.1,
+        help="repetition_penalty ranges from 1.0 to 2.0 (or higher in some cases). It controls the diversity and coherence of the audio tokens generated. The higher the value, the greater the discouragement of repetition. Setting value to 1.0 means no penalty.",
     )
     parser.add_argument(
         "--run_n_segments",
@@ -240,6 +247,8 @@ def create_args(
             stage2_model,
             "--max_new_tokens",
             str(max_new_tokens),
+            "--repetition_penalty",
+            str(repetition_penalty),
             "--stage2_batch_size",
             str(stage2_batch_size),
             "--run_n_segments",
@@ -379,7 +388,7 @@ def main(args):
     codec_model.to(device)
     codec_model.eval()
 
-    print("profile:"+ str(args.profile))
+    print("profile:" + str(args.profile))
 
     offload.profile(
         pipe,
@@ -451,14 +460,16 @@ def main(args):
     # Here is suggested decoding config
     top_p = 0.93
     temperature = 1.0
-    repetition_penalty = 1.0
+    repetition_penalty = args.repetition_penalty
     # special tokens
     start_of_segment = mmtokenizer.tokenize("[start_of_segment]")
     end_of_segment = mmtokenizer.tokenize("[end_of_segment]")
     # Format text prompt
     run_n_segments = min(args.run_n_segments + 1, len(lyrics))
     raw_output = None
-    for i, p in enumerate(tqdm(prompt_texts[:run_n_segments], desc="Stage1 inference...")):
+    for i, p in enumerate(
+        tqdm(prompt_texts[:run_n_segments], desc="Stage1 inference...")
+    ):
         section_text = p.replace("[start_of_segment]", "").replace(
             "[end_of_segment]", ""
         )
@@ -565,7 +576,8 @@ def main(args):
                 output_seq = torch.cat((output_seq, tensor_eoa), dim=1)
             if i > 1 or raw_output is not None:
                 raw_output = torch.cat(
-                    [raw_output, prompt_ids, output_seq[:, input_ids.shape[-1] :]], dim=1
+                    [raw_output, prompt_ids, output_seq[:, input_ids.shape[-1] :]],
+                    dim=1,
                 )
             else:
                 raw_output = output_seq
