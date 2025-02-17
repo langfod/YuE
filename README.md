@@ -18,8 +18,10 @@ Our model's name is **YuE (乐)**. In Chinese, the word means "music" and "happi
 YuE is a groundbreaking series of open-source foundation models designed for music generation, specifically for transforming lyrics into full songs (lyrics2song). It can generate a complete song, lasting several minutes, that includes both a catchy vocal track and accompaniment track. YuE is capable of modeling diverse genres/languages/vocal techniques. Please visit the [**Demo Page**](https://map-yue.github.io/) for amazing vocal performance.
 
 ## News and Updates
+* 📌 Join Us on Discord! [![Discord](https://img.shields.io/discord/842440537755353128?color=%237289da&logo=discord)](https://discord.gg/ssAyWMnMzu)
+
+* **2025.02.17 🫶** Now YuE supports music continuation and Google Colab! See [YuE-extend by Mozer](https://github.com/Mozer/YuE-extend).
 * **2025.02.07 🎉** Get YuE for Windows on [pinokio](https://pinokio.computer).
-* **2025.02.06** Join Us on Discord! [![Discord](https://img.shields.io/discord/842440537755353128?color=%237289da&logo=discord)](https://discord.gg/ssAyWMnMzu)
 
 * **2025.01.30 🔥 Inference Update**: We now support dual-track ICL mode! You can prompt the model with a reference song, and it will generate a new song in a similar style (voice cloning [demo by @abrakjamson](https://x.com/abrakjamson/status/1885932885406093538), music style transfer [demo by @cocktailpeanut](https://x.com/cocktailpeanut/status/1886456240156348674), etc.). Try it out! 🔥🔥🔥 P.S. Be sure to check out the demos first—they're truly impressive. 
 
@@ -258,7 +260,7 @@ The prompt consists of three parts: genre tags, lyrics, and ref audio.
 
 5. We find that [intro] label is less stable, so we recommend starting with [verse] or [chorus].
 
-6. For generating music with no vocal, see [issue 18](https://github.com/multimodal-art-projection/YuE/issues/18).
+6. For generating music with no vocal (instrumental only), see [issue 18](https://github.com/multimodal-art-projection/YuE/issues/18).
 
 
 ### Audio Prompt
@@ -270,6 +272,8 @@ The prompt consists of three parts: genre tags, lyrics, and ref audio.
 3. Use the chorus part of the music as prompt will result in better musicality.
 
 4. Around 30s audio is recommended for ICL.
+
+5. For music continuation, see [YuE-extend by Mozer](https://github.com/Mozer/YuE-extend). Also supports Colab.
 
 ---
 
