@@ -39,6 +39,36 @@ YuE is a groundbreaking series of open-source foundation models designed for mus
 
 <br>
 
+## Requirements
+
+  Give unrestricted script access to powershell so venv can work:
+
+- Open an administrator powershell window
+- Type `Set-ExecutionPolicy Unrestricted` and answer A
+- Close admin powershell window
+
+~~Python >=3.8 is recommended.~~
+
+~~Install dependencies with the following command:~~
+
+~~```
+pip install -r requirements.txt
+~~```~~
+
+~~### **Important: Install FlashAttention 2**~~
+~~For saving GPU memory, **FlashAttention 2 is mandatory**. Without it, large sequence lengths will lead to out-of-memory (OOM) errors, especially on GPUs with limited memory. Install it using the following command:~~
+~~```
+pip install flash-attn --no-build-isolation
+~~```~~
+~~Before installing FlashAttention, ensure that your CUDA environment is correctly set up. ~~
+~~For example, if you are using CUDA 11.8:~~
+~~- If using a module system:~~
+~~``` module load cuda11.8/toolkit/11.8.0 ```~~
+~~- Or manually configure CUDA in your shell:~~
+~~```
+    export PATH=/usr/local/cuda-11.8/bin:$PATH
+    export LD_LIBRARY_PATH=/usr/local/cuda-11.8/lib64:$LD_LIBRARY_PATH
+~~```~~
 ---
 ## TODOs📋
 
@@ -87,20 +117,20 @@ To use a **GUI/Gradio** interface, check out:
 - [YuE-Interface](https://github.com/alisson-anjos/YuE-Interface)  
 
 ### 1. Install environment and dependencies
-Make sure properly install flash attention 2 to reduce VRAM usage. 
-```bash
-# We recommend using conda to create a new environment.
-conda create -n yue python=3.8 # Python >=3.8 is recommended.
-conda activate yue
-# install cuda >= 11.8
-conda install pytorch torchvision torchaudio cudatoolkit=11.8 -c pytorch -c nvidia
+~~Make sure properly install flash attention 2 to reduce VRAM usage.~~ 
+~~```bash~~
+~~# We recommend using conda to create a new environment.~~
+~~conda create -n yue python=3.8 # Python >=3.8 is recommended.
+conda activate yue~~
+~~# install cuda >= 11.8~~
+~~conda install pytorch torchvision torchaudio cudatoolkit=11.8 -c pytorch -c nvidia
 pip install -r <(curl -sSL https://raw.githubusercontent.com/multimodal-art-projection/YuE/main/requirements.txt)
 
-# For saving GPU memory, FlashAttention 2 is mandatory. 
-# Without it, long audio may lead to out-of-memory (OOM) errors.
-# Be careful about matching the cuda version and flash-attn version
-pip install flash-attn --no-build-isolation
-```
+~~# For saving GPU memory, FlashAttention 2 is mandatory.~~
+~~# Without it, long audio may lead to out-of-memory (OOM) errors.~~
+~~# Be careful about matching the cuda version and flash-attn version
+pip install flash-attn --no-build-isolation~~
+~~```~~
 
 ### 2. Download the infer code and tokenizer
 ```bash
@@ -109,11 +139,14 @@ pip install flash-attn --no-build-isolation
 sudo apt update
 sudo apt install git-lfs
 git lfs install
-git clone https://github.com/multimodal-art-projection/YuE.git
-
-cd YuE/inference/
-git clone https://huggingface.co/m-a-p/xcodec_mini_infer
+git clone https://github.com/sdbds/YuE-for-windows.git
 ```
+~~cd YuE/inference/~~
+~~git clone https://huggingface.co/m-a-p/xcodec_mini_infer~~
+
+~~Here’s a quick guide to help you generate music with **YuE** using 🤗 Transformers. Before running the code, make sure your environment is properly set up, and that all dependencies are installed.~~
+
+powershell run with `1、install-uv-qinglong.ps1` (right click then choose `use powershell run`) auto install in one-clik
 
 ### 3. Run the inference
 Now generate music with **YuE** using 🤗 Transformers. Make sure your step [1](#1-install-environment-and-dependencies) and [2](#2-download-the-infer-code-and-tokenizer) are properly set up. 
@@ -121,6 +154,11 @@ Now generate music with **YuE** using 🤗 Transformers. Make sure your step [1]
 Note:
 - Set `--run_n_segments` to the number of lyric sections if you want to generate a full song. Additionally, you can increase `--stage2_batch_size` based on your available GPU memory.
 
+powershell run with `2、run.ps1` (right click then choose `use powershell run`)
+
+You can edit  `2、run.ps1` for setting args below:
+
+In the following example, customize the `genres` and `lyrics` in the script, then execute it to generate a song with **YuE**.
 - You may customize the prompt in `genre.txt` and `lyrics.txt`. See prompt engineering guide [here](#prompt-engineering-guide).
 
 - You can increase `--stage2_batch_size` to speed up the inference, but be careful for OOM.
@@ -128,8 +166,8 @@ Note:
 - LM ckpts will be automatically downloaded from huggingface. 
 
 
-```bash
-# This is the CoT mode.
+~~```bash~~    
+~# This is the CoT mode.
 cd YuE/inference/
 python infer.py \
     --cuda_idx 0 \
@@ -142,7 +180,7 @@ python infer.py \
     --output_dir ../output \
     --max_new_tokens 3000 \
     --repetition_penalty 1.1
-```
+~~```~~
 
 We also support music in-context-learning (provide a reference song), there are 2 types: single-track (mix/vocal/instrumental) and dual-track. 
 
@@ -157,12 +195,12 @@ Note:
 
 - You can separate the vocal and instrumental tracks using [python-audio-separator](https://github.com/nomadkaraoke/python-audio-separator) or [Ultimate Vocal Remover GUI](https://github.com/Anjok07/ultimatevocalremovergui).
 
-```bash
-# This is the dual-track ICL mode.
-# To turn on dual-track mode, enable `--use_dual_tracks_prompt`
-# and provide `--vocal_track_prompt_path`, `--instrumental_track_prompt_path`, 
-# `--prompt_start_time`, and `--prompt_end_time`
-# The ref audio is taken from GTZAN test set.
+~~```bash~~
+~# This is the dual-track ICL mode.
+~# To turn on dual-track mode, enable `--use_dual_tracks_prompt`
+~# and provide `--vocal_track_prompt_path`, `--instrumental_track_prompt_path`, 
+~# `--prompt_start_time`, and `--prompt_end_time`
+~# The ref audio is taken from GTZAN test set.
 cd YuE/inference/
 python infer.py \
     --cuda_idx 0 \
@@ -180,9 +218,9 @@ python infer.py \
     --instrumental_track_prompt_path ../prompt_egs/pop.00001.Instrumental.mp3 \
     --prompt_start_time 0 \
     --prompt_end_time 30 
-```
+~~~```~~~
 
-```bash
+~~~```bash~~~
 # This is the single-track (mix/vocal/instrumental) ICL mode.
 # To turn on single-track ICL, enable `--use_audio_prompt`, 
 # and provide `--audio_prompt_path` , `--prompt_start_time`, and `--prompt_end_time`. 
@@ -202,9 +240,8 @@ python infer.py \
     --use_audio_prompt \
     --audio_prompt_path ../prompt_egs/pop.00001.mp3 \
     --prompt_start_time 0 \
-    --prompt_end_time 30 
-```
----
+    --prompt_end_time 30
+~~```~~
  
 ## Prompt Engineering Guide
 The prompt consists of three parts: genre tags, lyrics, and ref audio.
